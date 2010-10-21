@@ -27,7 +27,7 @@ ARGV.options do |o|
   o.separator   "[-k] and [-s] options are mandatory"
   o.separator   ""
   
-  o.on("-o", "--outfile=[val]", String,
+  o.on("-o", "--outfile=val", String,
        "Yaml output file",
        "Default: #{OPTIONS[:outfile]}")     { |OPTIONS[:outfile]| }
   o.on("-k", "--key=val", String,
@@ -49,7 +49,7 @@ consumer      = OAuth::Consumer.new OPTIONS[:key], OPTIONS[:secret], {:site => Y
 request_token = consumer.get_request_token
 
 puts "Please visit the following URL in your browser to authorize your application, then enter the 4 character security code when done: #{request_token.authorize_url}"
-oauth_verifier =  gets
+oauth_verifier =  STDIN.gets
 response = consumer.token_request(consumer.http_method, 
                                   (consumer.access_token_url? ? consumer.access_token_url : consumer.access_token_path),
                                   request_token, 
