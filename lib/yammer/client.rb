@@ -2,7 +2,7 @@ module Yammer
   class Client
     def initialize(options={})
       options.assert_has_keys(:consumer, :access) unless options.has_key?(:config)
-      
+
       yammer_url = options.delete(:yammer_host) || "https://www.yammer.com"
       @api_path   = "/api/v1/"
 
@@ -17,10 +17,27 @@ module Yammer
       @access_token = OAuth::AccessToken.new(consumer, options[:access][:token], options[:access][:secret])
     end
 
-
-    # TODO: modularize message and user handling 
+    # TODO: modularize message and user handling
     def messages(action = :all, params = {})
-      params.merge!(:resource => :messages)
+      #Default optional parameters
+      # => older_than, newer_than, threaded
+
+      params.symbolize_keys!
+      #Resource for messages defined
+      #Available options at time of writing:
+         # 'messages'
+         # 'messages/sent'
+         # 'messages/received'
+         # 'messages/following'
+         # 'messages/from_user/id'
+         # 'messages/from_bot/id'
+         # 'messages/tagged_with/id'
+         # 'messages/in_group/id'
+         # 'messages/favorites_of/id'
+         # 'messages/in_thread/id'
+      resource = params.keys.include?(:resource) ? params[:resource].to_s.gsub(/^\//,'') : :messages
+
+      params.update(:resource => resource)
       params.merge!(:action => action) unless action == :all
 
       parsed_response = JSON.parse(yammer_request(:get, params).body)
@@ -93,7 +110,7 @@ module Yammer
           raise "503: Service Unavailable"
         else
           raise "Error. HTTP Response #{response.code}"
-        end   
+        end
     end
 
   end
