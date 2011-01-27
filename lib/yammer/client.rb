@@ -1,9 +1,12 @@
 module Yammer
   class Client
+
     def initialize(options={})
       options.assert_has_keys(:consumer, :access) unless options.has_key?(:config)
 
       yammer_url = options.delete(:yammer_host) || "https://www.yammer.com"
+      proxy      = options.delete(:proxy)
+
       @api_path   = "/api/v1/"
 
       if options[:config]
@@ -12,7 +15,10 @@ module Yammer
         options[:access]    = config['access'].symbolize_keys
       end
 
-      consumer = OAuth::Consumer.new(options[:consumer][:key], options[:consumer][:secret], :site => yammer_url)
+      consumer_attributes = {:site => yammer_url}
+      consumer_attributes.update(:proxy => proxy) if proxy
+
+      consumer = OAuth::Consumer.new(options[:consumer][:key], options[:consumer][:secret], consumer_attributes)
       consumer.http.set_debug_output($stderr) if options[:verbose] == true
       @access_token = OAuth::AccessToken.new(consumer, options[:access][:token], options[:access][:secret])
     end

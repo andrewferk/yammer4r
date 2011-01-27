@@ -3,6 +3,30 @@ require 'ostruct'
 
 describe Yammer::Client do
 
+  context "initialize" do
+
+    describe 'proxy' do
+
+      it "should allow setting of proxy" do
+        OAuth::Consumer.should_receive('new').with(nil, nil, {:proxy=>"http://www.example_proxy.com:8484", :site=>"https://www.yammer.com"})
+        @client = Yammer::Client.new(:consumer => {}, :access => {}, :proxy => 'http://www.example_proxy.com:8484')
+      end
+
+      it 'should load without any proxy set' do
+        OAuth::Consumer.should_receive('new').with(nil, nil, {:site=>"https://www.yammer.com"})
+        @client = Yammer::Client.new(:consumer => {}, :access => {})
+      end
+
+    end
+
+    it "should allow setting of consumer and access via config" do
+      OAuth::Consumer.should_receive('new').with("SOME_CLIENT_KEY", "A_NOT_SO_SECRET_SECRET", {:site=>"https://www.yammer.com"})
+      @client = Yammer::Client.new(:config => File.expand_path(File.dirname(__FILE__) + '/../fixtures/oauth_test.yml'))
+    end
+
+  end
+
+
   context "creating" do
 
     before(:each) do

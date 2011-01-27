@@ -1,0 +1,7 @@
+consumer:
+  key: SOME_CLIENT_KEY
+  secret: A_NOT_SO_SECRET_SECRET
+
+access:
+  token: SOME_ACCESS_TOKEN_FROM_YAML
+  secret: SOME_POOR_ACCESS_SECRET_KNOWN_TO_THE_WORLD
