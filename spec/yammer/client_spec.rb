@@ -24,6 +24,12 @@ describe Yammer::Client do
       @client = Yammer::Client.new(:config => File.expand_path(File.dirname(__FILE__) + '/../fixtures/oauth_test.yml'))
     end
 
+    it "should allow setting of yammer url" do
+      OAuth::Consumer.should_receive('new').with(nil, nil, {:site=>"http://www.some_custom_yammer_host.com"})
+      @client = Yammer::Client.new(:consumer => {}, :access => {}, :yammer_host => 'http://www.some_custom_yammer_host.com')
+    end
+
+
   end
 
 
